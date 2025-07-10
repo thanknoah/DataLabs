@@ -54,7 +54,7 @@ def averageY():
 
     return total/len(y_val)
 
-# m=∑(x[i]​−average(x))2∑(x[i]​−average(x))(y[i]​−average(y)​)​, where x
+# m=∑(x[i]​−average(x)) * ∑(x[i]​−average(x))  / (y[i]​−average(y)​)​,
 def calculateLinearSlope(averageX, averageY):
     totalSigmaNotation = 0
     totalSigmaNotation2 = 0
