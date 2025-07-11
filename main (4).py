@@ -1,4 +1,6 @@
 # Imports
+import matplotlib.pyplot as plt
+import numpy as np
 import time, random
 
 # Sample X data
@@ -38,7 +40,6 @@ y_val = [
 ]
 
 
-
 # Averages
 def averageX():
     total = 0
@@ -54,7 +55,7 @@ def averageY():
 
     return total/len(y_val)
 
-# m=∑(x[i]​−average(x)) * ∑(x[i]​−average(x))  / (y[i]​−average(y)​)​,
+# m=∑(x[i]​−average(x))2∑(x[i]​−average(x))(y[i]​−average(y)​)​, where x
 def calculateLinearSlope(averageX, averageY):
     totalSigmaNotation = 0
     totalSigmaNotation2 = 0
@@ -65,13 +66,19 @@ def calculateLinearSlope(averageX, averageY):
 
     return totalSigmaNotation / totalSigmaNotation2
 
+# Return the equation in integer
 def returnEquation():
     m = calculateLinearSlope(averageX(), averageY())
     c = averageY() - (m * averageX())
     return f"y = {m}x + {c}"
 
+# Return the equation in indivisual form
+def returnIndivisualNumbersOfEquation():
+    m = calculateLinearSlope(averageX(), averageY())
+    c = averageY() - (m * averageX())
+    return [m, c]
 
-# y=mx+c
+# Used to predict value using y=mx+c
 def predictValue(valType, val):
     averageXVal = averageX()
     averageYVal = averageY()
@@ -83,7 +90,7 @@ def predictValue(valType, val):
     else:
         return (m*val) + c
 
-# Error Calculation
+# Error Calculation (based on actual points)
 def calculateAverageErr(labelledXValue, labelledYValue, labelledXValueUnit, labelledYValueUnit):
     totalErrorMarginX = 0
     totalErrorMarginY = 0
@@ -93,43 +100,59 @@ def calculateAverageErr(labelledXValue, labelledYValue, labelledXValueUnit, labe
         predicted_age = predictValue("x", y_val[i]) 
         error_x = abs(x_val[i] - predicted_age)   
         totalErrorMarginX += error_x
-
+        
         predicted_weight = predictValue("y", x_val[i])
         error_y = abs(y_val[i] - predicted_weight) 
         totalErrorMarginY += error_y
 
+    # Work it out and print
     avg_error_x = totalErrorMarginX / len(x_val)
     avg_error_y = totalErrorMarginY / len(y_val)
     print("\nError Margin {} [X]: {:.2f} {}".format(labelledXValue, avg_error_x, labelledXValueUnit))
     print("Error Margin {} [Y]: {:.2f} {}\n".format(labelledYValue, avg_error_y, labelledYValueUnit))
 
-# Main program
+# Main program && Added graph
 def mainProgramInputPrediction():
-    print("Welcome to DataLabs Beta, user. This program is for data scientists, programmers, mathemeticians.")
-    print("New feature: liner regression algorithim, (aka line of best fit on computer) to predict x/y value.")
-    print("Warning: Values may be unexpected, as this is soley a line of best fit.")
+    print("Welcome to DataLabs V1.0, user. This program is for data scientists, programmers, mathemeticians.")
+    print("New feature: liner regression algorithim, Visual Graph")
     print("Credits: Noah\n")
 
     labelledXValue = input("Label X Axis >> ")
     labelledXValueUnit = input("Label X Unit >> ")
-    labelledYValue = input("Label Y Axis >> ")
+    labelledYValue = input("\nLabel Y Axis >> ")
     labelledYValueUnit = input("Label Y Unit >> ")
+    
+    title = input("\nEnter title of data >> ")
 
     print("\nSetting up settings..\n")
     time.sleep(3)
     print(f"Modelling Linear Equation: {returnEquation()}")
+
     calculateAverageErr(labelledXValue, labelledYValue, labelledXValueUnit, labelledYValueUnit)
+    plt.scatter(x_val, y_val, color='blue', label='Data Points')
+    plt.xlabel(labelledXValue + " (" + labelledXValueUnit + ")")
+    plt.ylabel(labelledYValue + " (" + labelledYValueUnit + ")")
+
+    indiviusalElements = returnIndivisualNumbersOfEquation()
+    plt.title(title)
+    x = np.linspace(x_val[0], x_val[-1], 100)
+    y = (indiviusalElements[0] * x) + indiviusalElements[1]
+    y_str = "y = " + str(indiviusalElements[0]) + "x + " + str(indiviusalElements[1])
+
+    plt.plot(x, y, color='red', label=y_str)
+    plt.legend()
+    plt.show(block=False)
     
     # Input
     while True:
         inputType = input(f"Value predicting [{labelledXValue}, {labelledYValue}] >> ")
-
+        
         if inputType.lower() == labelledXValue.lower():
             inputValue = input(f"Enter {labelledYValue}: ")
-            print(f"\nPredicted {labelledYValue} Value: {str(predictValue("x", float(inputValue)))} {labelledYValueUnit}\n")
+            print(f"\nPredicted {labelledXValue} Value: {str(predictValue("x", float(inputValue)))} {labelledXValueUnit}\n")
         elif inputType.lower() == labelledYValue.lower():
             inputValue = input(f"Enter {labelledXValue}: ")
-            print(f"\nPredicted {labelledXValue} Value:  {str(predictValue("y", float(inputValue)))} {labelledXValueUnit}\n")
+            print(f"\nPredicted {labelledYValue} Value:  {str(predictValue("y", float(inputValue)))} {labelledYValueUnit}\n")
         else:
             print("Invalid")
 
