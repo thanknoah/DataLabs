@@ -65,7 +65,7 @@ def calculateAverageErr(labelledXValue, labelledYValue, labelledXValueUnit, labe
 
 # Welcome screen
 def print_welcome():
-    print(ctext(r"""
+    print(ctext("⚠️ [WARNING]: KNOWN BUG IN DIFFERENTIATION WITH TERMS WITH MINUS POWERS E.G [3x^-3]", "33"))
  ___         _          _           _        
 |   \  __ _ | |_  __ _ | |    __ _ | |__  ___
 | |) |/ _` ||  _|/ _` || |__ / _` ||  _ \(_-/
