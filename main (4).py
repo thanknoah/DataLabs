@@ -144,7 +144,7 @@ def linearRegressionModellingOption():
     plt.title(title, fontsize=13)
     m, c = returnIndivisualNumbersOfEquation()
     x_range = np.linspace(min(x_val), max(x_val), 100)
-    plt.plot(x_range, m * x_range + c, color='red', label=f"y = {m:.4f}x + {c:.4f}")
+    plt.plot(x_range, m * x_range + c, color='red', label=f"y = {m:.3f}x + {c:.3f}")
     plt.legend()
     plt.grid(True)
     plt.show(block=False)
@@ -159,7 +159,9 @@ def linearRegressionModellingOption():
             except ValueError:
                 print(ctext("❌ Invalid number input. Please try again.", "91"))
                 continue
+                
             result = predictValue("x", value)
+            
             if result is None:
                 print(ctext("⚠️ Cannot predict X due to zero slope.", "93"))
             else:
@@ -171,7 +173,9 @@ def linearRegressionModellingOption():
             except ValueError:
                 print(ctext("❌ Invalid number input. Please try again.", "91"))
                 continue
+                
             result = predictValue("y", value)
+            
             if result is None:
                 print(ctext("⚠️ Cannot predict Y due to zero slope.", "93"))
             else:
@@ -179,6 +183,7 @@ def linearRegressionModellingOption():
 
         elif inputType == "exit":
             confirm = input(ctext("🔄 Restart session? (y/n): ", "96"))
+            
             if confirm.lower() == 'y':
                 plt.close()
                 print("\n")
