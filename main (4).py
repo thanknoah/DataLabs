@@ -307,9 +307,9 @@ def mainProgram():
         elif tool_usage == "update log":
             print(ctext("\n📈 Beta V1.1 UPDATE LOG: New calculus mode introduced (differentation only for now), enhanced UI.", "95"))
         elif tool_usage == "credits":
-                print(ctext("\n💻 Developed with care by ", "95") + ctext("Noah\n", "96") + ctext("📦 Credits: ", "95") + ctext("Userman2424", "95") +  ctext(" (Differentiation formatting algorithm), ", "95") + ctext("ChatGPT 🤖", "95") + ctext(" (Helped with GUI)", "95"))
+            print(ctext("\n💻 Developed with care by ", "95") + ctext("Noah\n", "96") + ctext("📦 Credits: ", "95") + ctext("Userman2424", "95") +  ctext(" (Differentiation formatting algorithm), ", "95") + ctext("ChatGPT 🤖", "95") + ctext(" (Helped with GUI)", "95"))
         elif tool_usage == "pledge":
-                print("\nComputer >> To enhance the experience for you, dear user! :)")
+            print("\nComputer >> To enhance the experience for you, dear user! :)")
         else:
             print(ctext("\n❌ Invalid input! Please choose either 'Linear Regression Modelling' or 'Calculus Calculation'.", "91"))
 
