@@ -260,7 +260,7 @@ def clean_num(n):
 def calculusCalculationOption():
     print(ctext("\n🧮 Calculus Calculation Selected.", "96"))
     exit = False
-    
+
     while not exit:
         print(ctext("🔮 Format accepted examples: [2x^3, 2x, 2, 2x^2+5x+5] (EXTENDS TO NEGATIVE COEFFICENT AND POWER)", "96"))
         calculusMethod = input(ctext("\n⚙️ Choose mode: Integration or Differentiate >> ", "96")).strip().lower()
@@ -361,13 +361,11 @@ def calculusCalculationOption():
 
 
 # Run
-while True:
-    try:
-        mainProgram()
-    except Exception as e:
-        print(ctext(f"\n❌ Error: {e}", "91"))
-        if input(ctext("Try again? (y/n): ", "96")).lower() != 'y':
-            print(ctext("\n👋 Goodbye!\n", "93"))
-            break
-        else:
-            print("\n")
+try:
+    mainProgram()
+except Exception as e:
+    print(ctext(f"\n❌ Error: {e}", "91"))
+    if input(ctext("Try again? (y/n): ", "96")).lower() != 'y':
+        print(ctext("\n👋 Goodbye!\n", "93"))
+    else:
+        print("\n")
