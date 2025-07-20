@@ -75,7 +75,7 @@ def print_welcome():
     print(
         ctext("\n🤖💻👨‍💻  ", "95") + 
         ctext("Welcome to ", "96") + 
-        ctext("DataLabs Beta [v1.1]", "94")
+        ctext("DataLabs Beta [v1.2]", "94")
     )
     print()
     print(ctext("🔬 Explore and model real-world datasets using linear regression.", "92"))
@@ -165,7 +165,7 @@ def linearRegressionModellingOption():
             if result is None:
                 print(ctext("⚠️ Cannot predict X due to zero slope.", "93"))
             else:
-                print(ctext(f"\n🔮 Predicted {labelledXValue}: {result:.2f} {labelledXValueUnit}\n", "92"))
+                print(ctext(f"\n🔮 Predicted {labelledXValue}: {result:.2f} {labelledXValueUnit}", "92"))
 
         elif inputType == labelledYValue.lower():
             try:
@@ -195,7 +195,7 @@ def linearRegressionModellingOption():
 
 
 # Divide terms into coefficient, sign, exponent (CREDITS TO USERMAN242 FOR BUILDING THIS)
-def get_coefficient_and_exponent(term):
+def get_coefficient_and_exponent(term, method):
     pattern = r'^(?P<sign>[+-]?)(?P<coef>\d+(\.\d+)?|)(x(\^(?P<exp>-?\d+(\.\d+)?))?)?$'
     match = re.fullmatch(pattern, term.strip())
 
@@ -209,7 +209,12 @@ def get_coefficient_and_exponent(term):
     includes_x = 'x' in term
 
     if coef_str == '':
-        coef = 1.0 if includes_x else 0.0
+       if includes_x: 
+          coef = 1.0
+       elif method == "Differentiation": 
+          coef = 0.0
+       elif method == "Integration":
+          coef = 1.0
     else:
         coef = float(coef_str)
 
@@ -226,13 +231,17 @@ def get_coefficient_and_exponent(term):
 
     return coef, exponent, includes_x
 
+# clean_num clean number
+def clean_num(n):
+    return int(n) if n == int(n) else round(n, 6)
+
 # Calculus Calculations (integrating, differentiating)
 def calculusCalculationOption():
     print(ctext("\n🧮 Calculus Calculation Selected.", "96"))
     exit = False
     while not exit:
         print(ctext("🔮 Format accepted examples: [2x^3, 2x, 2, 2x^2+5x+5] (EXTENDS TO NEGATIVE COEFFICENT AND POWER)", "96"))
-        calculusMethod = input(ctext("\n⚙️ Choose mode: Integrate or Differentiate >> ", "96")).strip().lower()
+        calculusMethod = input(ctext("\n⚙️ Choose mode: Integration or Differentiate >> ", "96")).strip().lower()
 
         if calculusMethod not in ["differentiate", "integration"]:
             print(ctext("\n❌ Invalid input! Please type 'Differentiate' or 'Integration'.", "91"))
@@ -252,7 +261,7 @@ def calculusCalculationOption():
                 return
 
             expr = equation.replace(" ", "")
-            term_pattern = r'[+-]?(\d+(\.\d+)?|)?(x(\^-?\d+(\.\d+)?)?)?'
+            term_pattern = r'[+-]?(\d+(\.\d+)?(x(\^-?\d+(\.\d+)?)?)?|x(\^-?\d+(\.\d+)?)?)'
             full_pattern = f'^({term_pattern})+$'
 
             if re.fullmatch(full_pattern, expr):
@@ -263,37 +272,67 @@ def calculusCalculationOption():
 
                 if calculusMethod == "differentiate":
                     groupOfTerms = []
-
                     for term in terms:
-                        result = get_coefficient_and_exponent(term)
+
+                        result = get_coefficient_and_exponent(term, "Differentiation")
                         if result is None:
-                            print(ctext("❌ Invalid term format detected, please try again.", "91"))
-                            break
+                            print(ctext("\n❌ Invalid term format detected, please try again.\n", "91"))
+                            continue
 
                         coef, exponent, includes_x = result
-
                         if not includes_x:
                             continue  # derivative of constant is 0
 
-                        new_coef = coef * exponent
                         new_exponent = exponent - 1
-
-                        if new_coef % 1 == 0: new_coef = int(new_coef)
-                        if new_exponent % 1 == 0: new_exponent = int(new_exponent)
+                        new_coef = coef * exponent
 
                         if new_exponent == 0:
-                            currentTerm = str(round(new_coef, 6))
-                        elif new_exponent == 1:
-                            currentTerm = f"{round(new_coef, 6)}x"
-                        else:
-                            currentTerm = f"{round(new_coef, 6)}x^{round(new_exponent, 6)}"
+                            currentTerm = str(clean_num(new_coef))
 
+                        elif new_exponent == 1:
+                            currentTerm = f"{clean_num(new_coef)}x"
+
+                        else:
+                            currentTerm = f"{clean_num(new_coef)}x^{clean_num(new_exponent)}"
+
+                        if abs(coef) == 1:
+                            currentTerm = currentTerm[1:]
                         groupOfTerms.append(currentTerm)
 
                     result = 0 if len(groupOfTerms) == 0 else " + ".join(groupOfTerms).replace("+ -", "- ")
-                    print(ctext(f"\n🧮 Derivative (dy/dx): {result}\n", "92"))
-                else:
-                    print(ctext("🚧 Integration mode coming soon! Stay tuned.\n", "93"))
+                    print(ctext(f"\n🧮 Derivative f'(x) = {result}\n", "92"))
+
+                elif calculusMethod == "integration":
+                    groupOfTerms = []
+                    
+                    for term in terms:
+                        result = get_coefficient_and_exponent(term, "Integration")
+                        if result is None:
+                            print(ctext("\n❌ Invalid term format detected, please try again.\n", "91"))
+                            continue
+
+                        coef, exponent, includes_x = result
+
+                        if exponent == -1:
+                            currentTerm = f"{str(clean_num(coef))}ln |x|"
+
+                        elif exponent == 0 and not includes_x:
+                            currentTerm = f"{str(clean_num(coef))}x"
+
+                        else:
+                            new_exponent = exponent + 1
+                            new_coef = coef / new_exponent
+                            currentTerm = f"{clean_num(new_coef)}x^{clean_num(new_exponent)}"
+
+                        if abs(coef) == 1:
+                            currentTerm = currentTerm[1:]
+                        groupOfTerms.append(currentTerm)
+                        
+                
+                    groupOfTerms.pop(0)
+                    result = 0 if len(groupOfTerms) == 0 else " + ".join(groupOfTerms).replace("+ -", "- ")
+                    print(ctext(f"\n🧮 Integrated Expression ∫f(x) dx = {result} + C\n", "92"))
+
             else:
                 print(ctext("\n❌ Invalid expression. Use terms like 2x^2+3x+1 or 2x^-1+4\n", "91"))
     mainProgram()
@@ -302,13 +341,14 @@ def calculusCalculationOption():
 def mainProgram():
     print_welcome()
     while True:
-        tool_usage = input(ctext("\n⚙️ Pick a tool / command: Linear Regression Modelling, Calculus Calculation, Update Log, Credits, Pledge >> ", "96")).strip().lower()
+        print(ctext("⚙️ Non-tool Commands: Update Log, Credits, Pledge ", "96"))
+        tool_usage = input(ctext("⚙️ Pick a tool: Linear Regression Modelling, Calculus Calculation >> ", "96")).strip().lower()
         if tool_usage == "linear regression modelling":
             linearRegressionModellingOption()
         elif tool_usage == "calculus calculation":
             calculusCalculationOption()
         elif tool_usage == "update log":
-            print(ctext("\n📈 Beta V1.1 UPDATE LOG: New calculus mode introduced (differentation only for now), enhanced UI.", "95"))
+            print(ctext("\n📈 Beta V1.2 UPDATE LOG: Added integration to Calculus Calculation, bug fixes!", "95"))
         elif tool_usage == "credits":
             print(ctext("\n💻 Developed with care by ", "95") + ctext("Noah\n", "96") + ctext("📦 Credits: ", "95") + ctext("Userman2424", "95") +  ctext(" (Differentiation formatting algorithm), ", "95") + ctext("ChatGPT 🤖", "95") + ctext(" (Helped with GUI)", "95"))
         elif tool_usage == "pledge":
