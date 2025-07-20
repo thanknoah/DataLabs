@@ -65,7 +65,7 @@ def calculateAverageErr(labelledXValue, labelledYValue, labelledXValueUnit, labe
 
 # Welcome screen
 def print_welcome():
-    print(ctext("⚠️ [WARNING]: KNOWN BUG IN DIFFERENTIATION WITH TERMS WITH MINUS POWERS E.G [3x^-3]", "33"))
+    print(ctext(r"""
  ___         _          _           _        
 |   \  __ _ | |_  __ _ | |    __ _ | |__  ___
 | |) |/ _` ||  _|/ _` || |__ / _` ||  _ \(_-/
@@ -73,7 +73,7 @@ def print_welcome():
     """, "95"))
     print(ctext("=" * 60, "90")) 
     print(
-        ctext("🤖💻👨‍💻  ", "95") + 
+        ctext("\n🤖💻👨‍💻  ", "95") + 
         ctext("Welcome to ", "96") + 
         ctext("DataLabs Beta [v1.1]", "94")
     )
@@ -84,7 +84,7 @@ def print_welcome():
     print()
     print(ctext("⚠️  Please note: All model outputs are approximations.", "93"))
     print()
-    print(ctext("\n💻 Developed with care by ", "96") + ctext("Noah\n", "94") + ctext("📦 Credits: ", "90") + ctext("Userman2424", "92") +  ctext(" (Differentiation formatting algorithm), ", "90") + ctext("ChatGPT 🤖", "95") + ctext(" (Helped with GUI)\n", "90"))
+    print(ctext("💻 Developed with care by ", "96") + ctext("Noah\n", "94") + ctext("📦 Credits: ", "90") + ctext("Userman2424", "92") +  ctext(" (Differentiation formatting algorithm), ", "90") + ctext("ChatGPT 🤖", "95") + ctext(" (Helped with GUI)\n", "90"))
     print(ctext("=" * 60 + "\n", "90"))
 
 # Show available datasets
@@ -196,34 +196,35 @@ def linearRegressionModellingOption():
 
 # Divide terms into coefficient, sign, exponent (CREDITS TO USERMAN242 FOR BUILDING THIS)
 def get_coefficient_and_exponent(term):
-    pattern = r'(?P<sign>[+-]?)(?P<coef>\d+(\.\d+)?|)(x(\^(?P<exp>-?\d+(\.\d+)?)?)?)?'
-    match = re.fullmatch(pattern, term)
-    includes_x = 'x' in term
+    pattern = r'^(?P<sign>[+-]?)(?P<coef>\d+(\.\d+)?|)(x(\^(?P<exp>-?\d+(\.\d+)?))?)?$'
+    match = re.fullmatch(pattern, term.strip())
 
     if not match:
         return None
 
-    sign = match.group("sign")
-    sign = -1 if sign == '-' else 1
-    coef = match.group("coef")
+    sign_str = match.group("sign")
+    sign = -1 if sign_str == '-' else 1
 
-    if coef == '':
+    coef_str = match.group("coef")
+    includes_x = 'x' in term
+
+    if coef_str == '':
         coef = 1.0 if includes_x else 0.0
     else:
-        coef = float(coef)
+        coef = float(coef_str)
 
     coef *= sign
 
+    exp_str = match.group("exp")
     if includes_x:
-        if match.group("exp") is None:
+        if exp_str is None:
             exponent = 1.0
         else:
-            exponent = float(match.group("exp"))
+            exponent = float(exp_str)
     else:
         exponent = 0.0
 
     return coef, exponent, includes_x
-
 
 # Calculus Calculations (integrating, differentiating)
 def calculusCalculationOption():
@@ -251,15 +252,14 @@ def calculusCalculationOption():
                 return
 
             expr = equation.replace(" ", "")
-
-            term_pattern = r'[+-]?(\d+(\.\d+)?|)?x?(\^-?\d+(\.\d+)?)?'
+            term_pattern = r'[+-]?(\d+(\.\d+)?|)?(x(\^-?\d+(\.\d+)?)?)?'
             full_pattern = f'^({term_pattern})+$'
 
             if re.fullmatch(full_pattern, expr):
                 if not expr.startswith(('+', '-')):
                     expr = '+' + expr
 
-                terms = re.findall(r'[+-][^+-]+', expr)
+                terms = re.split(r'(?<!\^)(?=[+-])', expr)
 
                 if calculusMethod == "differentiate":
                     groupOfTerms = []
@@ -277,6 +277,9 @@ def calculusCalculationOption():
 
                         new_coef = coef * exponent
                         new_exponent = exponent - 1
+
+                        if new_coef % 1 == 0: new_coef = int(new_coef)
+                        if new_exponent % 1 == 0: new_exponent = int(new_exponent)
 
                         if new_exponent == 0:
                             currentTerm = str(round(new_coef, 6))
