@@ -114,8 +114,28 @@ def load_dataset(name):
         return x_label, y_label, x_unit, y_unit
     return None, None, None, None
 
+# Main program
+def mainProgram():
+    print_welcome()
+    while True:
+        print(ctext("⚙️ Non-tool Commands: Update Log, Credits, Pledge ", "96"))
+        tool_usage = input(ctext("⚙️ Pick a tool: Linear Regression Modelling, Calculus Calculation >> ", "96")).strip().lower()
+        if tool_usage == "linear regression modelling":
+            linearRegressionModellingOption()
+        elif tool_usage == "calculus calculation":
+            calculusCalculationOption()
+        elif tool_usage == "update log":
+            print(ctext("\n📈 Beta V1.2 UPDATE LOG: Added integration to Calculus Calculation, bug fixes!", "95"))
+        elif tool_usage == "credits":
+            print(ctext("\n💻 Developed with care by ", "95") + ctext("Noah\n", "96") + ctext("📦 Credits: ", "95") + ctext("Userman2424", "95") +  ctext(" (Differentiation formatting algorithm), ", "95") + ctext("ChatGPT 🤖", "95") + ctext(" (Helped with GUI)", "95"))
+        elif tool_usage == "pledge":
+            print("\nComputer >> To enhance the experience for you, dear user! :)")
+        else:
+            print(ctext("\n❌ Invalid input! Please choose either 'Linear Regression Modelling' or 'Calculus Calculation'.", "91"))
+
 # Load Linear Regression Model
 def linearRegressionModellingOption():
+    exit = False
     print(ctext("\n📊 Linear Regression Modelling Selected.\n", "96"))
     while True:
         print_dataset_menu()
@@ -149,7 +169,7 @@ def linearRegressionModellingOption():
     plt.grid(True)
     plt.show(block=False)
 
-    while True:
+    while exit == False:
         print(ctext(f"\n🎯 Predict '{labelledXValue}' or '{labelledYValue}' (or type 'exit')", "94"))
         inputType = input(ctext("Your choice: ", "96")).strip().lower()
 
@@ -182,16 +202,13 @@ def linearRegressionModellingOption():
                 print(ctext(f"\n🔮 Predicted {labelledYValue}: {result:.2f} {labelledYValueUnit}\n", "92"))
 
         elif inputType == "exit":
-            confirm = input(ctext("🔄 Restart session? (y/n): ", "96"))
-            
-            if confirm.lower() == 'y':
-                plt.close()
-                print("\n")
-                mainProgram()
-            return
-
+             print(ctext("\n👋 Exiting Linear Regression Modelling...", "93"))
+             plt.close()
+             exit = True
+             return
         else:
             print(ctext("❌ Invalid input. Please try again.", "91"))
+    mainProgram()
 
 
 # Divide terms into coefficient, sign, exponent (CREDITS TO USERMAN242 FOR BUILDING THIS)
@@ -201,13 +218,15 @@ def get_coefficient_and_exponent(term, method):
 
     if not match:
         return None
-
+    
+    # Handling Sign
     sign_str = match.group("sign")
     sign = -1 if sign_str == '-' else 1
 
     coef_str = match.group("coef")
     includes_x = 'x' in term
 
+    # Adding X to plain integers for integration, removing X for plain integers in differentiation
     if coef_str == '':
        if includes_x: 
           coef = 1.0
@@ -218,8 +237,10 @@ def get_coefficient_and_exponent(term, method):
     else:
         coef = float(coef_str)
 
+    # Assigning Sign to coefficent
     coef *= sign
-
+   
+    # Handling Coefficent
     exp_str = match.group("exp")
     if includes_x:
         if exp_str is None:
@@ -231,7 +252,7 @@ def get_coefficient_and_exponent(term, method):
 
     return coef, exponent, includes_x
 
-# clean_num clean number
+# Cleaning up number for output
 def clean_num(n):
     return int(n) if n == int(n) else round(n, 6)
 
@@ -239,6 +260,7 @@ def clean_num(n):
 def calculusCalculationOption():
     print(ctext("\n🧮 Calculus Calculation Selected.", "96"))
     exit = False
+    
     while not exit:
         print(ctext("🔮 Format accepted examples: [2x^3, 2x, 2, 2x^2+5x+5] (EXTENDS TO NEGATIVE COEFFICENT AND POWER)", "96"))
         calculusMethod = input(ctext("\n⚙️ Choose mode: Integration or Differentiate >> ", "96")).strip().lower()
@@ -337,24 +359,6 @@ def calculusCalculationOption():
                 print(ctext("\n❌ Invalid expression. Use terms like 2x^2+3x+1 or 2x^-1+4\n", "91"))
     mainProgram()
 
-# Main program
-def mainProgram():
-    print_welcome()
-    while True:
-        print(ctext("⚙️ Non-tool Commands: Update Log, Credits, Pledge ", "96"))
-        tool_usage = input(ctext("⚙️ Pick a tool: Linear Regression Modelling, Calculus Calculation >> ", "96")).strip().lower()
-        if tool_usage == "linear regression modelling":
-            linearRegressionModellingOption()
-        elif tool_usage == "calculus calculation":
-            calculusCalculationOption()
-        elif tool_usage == "update log":
-            print(ctext("\n📈 Beta V1.2 UPDATE LOG: Added integration to Calculus Calculation, bug fixes!", "95"))
-        elif tool_usage == "credits":
-            print(ctext("\n💻 Developed with care by ", "95") + ctext("Noah\n", "96") + ctext("📦 Credits: ", "95") + ctext("Userman2424", "95") +  ctext(" (Differentiation formatting algorithm), ", "95") + ctext("ChatGPT 🤖", "95") + ctext(" (Helped with GUI)", "95"))
-        elif tool_usage == "pledge":
-            print("\nComputer >> To enhance the experience for you, dear user! :)")
-        else:
-            print(ctext("\n❌ Invalid input! Please choose either 'Linear Regression Modelling' or 'Calculus Calculation'.", "91"))
 
 # Run
 while True:
